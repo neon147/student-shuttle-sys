@@ -1,16 +1,18 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Bus, Clock, Bell, MapPin, Calendar } from 'lucide-react';
+import { Bus, Clock, Bell, MapPin, Calendar, CheckCircle } from 'lucide-react';
+import { useAuth } from '@/lib/auth-context';
+import { getNotifications, AssignmentNotification } from '@/lib/shared-store';
 
 const schedule = [
   { day: 'Monday - Friday', pickup: '7:15 AM', dropoff: '3:30 PM', stop: 'Main Gate - Stop A' },
   { day: 'Saturday', pickup: '8:00 AM', dropoff: '12:00 PM', stop: 'Main Gate - Stop A' },
 ];
 
-const notifications = [
-  { id: 1, message: 'Bus 01 is arriving in 5 minutes', time: '2 min ago', type: 'info' as const },
-  { id: 2, message: 'Schedule change: Saturday pickup moved to 8:30 AM', time: '1 hour ago', type: 'warning' as const },
-  { id: 3, message: 'Route change due to road construction on Oak Street', time: '3 hours ago', type: 'warning' as const },
-  { id: 4, message: 'Welcome to BusTrack! Your bus assignment: Bus 01', time: '1 day ago', type: 'info' as const },
+const defaultNotifications = [
+  { id: 'def1', message: 'Bus 01 is arriving in 5 minutes', time: '2 min ago', type: 'info' as const },
+  { id: 'def2', message: 'Schedule change: Saturday pickup moved to 8:30 AM', time: '1 hour ago', type: 'warning' as const },
+  { id: 'def3', message: 'Route change due to road construction on Oak Street', time: '3 hours ago', type: 'warning' as const },
 ];
 
 const typeStyles = {
@@ -19,12 +21,41 @@ const typeStyles = {
 };
 
 export default function StudentDashboard() {
+  const { user } = useAuth();
+  const [assignmentNotifs] = useState<AssignmentNotification[]>(() =>
+    user ? getNotifications(user.email) : []
+  );
+
   return (
     <div className="space-y-8">
       <div>
         <h2 className="text-2xl font-heading font-bold text-foreground">Student Dashboard</h2>
         <p className="text-muted-foreground">Your bus information at a glance</p>
       </div>
+
+      {/* Assignment notifications from manager */}
+      {assignmentNotifs.length > 0 && (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-card rounded-xl p-6 shadow-card border-2 border-success/30">
+          <div className="flex items-center gap-2 mb-4">
+            <CheckCircle className="h-5 w-5 text-success" />
+            <h3 className="font-heading font-semibold text-foreground">Bus Assignment</h3>
+            <span className="ml-auto text-xs bg-success/10 text-success px-2 py-0.5 rounded-full">New</span>
+          </div>
+          <div className="space-y-2">
+            {assignmentNotifs.map(n => (
+              <div key={n.id} className="flex gap-3 p-3 rounded-lg bg-success/5">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-success/10 text-success">
+                  <Bus className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-sm text-foreground font-medium">{n.message}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{new Date(n.timestamp).toLocaleString()}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      )}
 
       {/* Bus info */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-card rounded-xl p-6 shadow-card">
@@ -85,7 +116,7 @@ export default function StudentDashboard() {
             <h3 className="font-heading font-semibold text-foreground">Notifications</h3>
           </div>
           <div className="space-y-3">
-            {notifications.map(n => (
+            {defaultNotifications.map(n => (
               <div key={n.id} className="flex gap-3 p-3 rounded-lg bg-muted/50">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${typeStyles[n.type]}`}>
                   <Bell className="h-4 w-4" />
