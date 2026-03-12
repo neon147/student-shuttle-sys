@@ -92,16 +92,7 @@ export default function Signup() {
 
           <div>
             <Label htmlFor="institution" className="flex items-center gap-2 mb-1.5"><School className="h-4 w-4 text-muted-foreground" /> College or School</Label>
-            <select
-              id="institution"
-              required
-              value={form.institution}
-              onChange={set('institution')}
-              className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="">Select institution...</option>
-              {institutions.map(i => <option key={i} value={i}>{i}</option>)}
-            </select>
+            <Input id="institution" required value={form.institution} onChange={set('institution')} placeholder="e.g. Central University" />
           </div>
 
           <div>
