@@ -3,7 +3,11 @@ import { motion } from 'framer-motion';
 import { Users, AlertTriangle, MapPin, Clock, CheckCircle, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
+import { useAuth } from '@/lib/auth-context';
+import { addReport, getNotifications, AssignmentNotification } from '@/lib/shared-store';
+import { Bell } from 'lucide-react';
 
 const mockStudents = ['Sara M.', 'Omar T.', 'Lina H.', 'Khalid A.', 'Noor S.'];
 
@@ -14,9 +18,13 @@ const pastRoutes = [
 ];
 
 export default function DriverDashboard() {
+  const { user } = useAuth();
   const [onboard, setOnboard] = useState<string[]>([]);
   const [sharing, setSharing] = useState(false);
   const [emergency, setEmergency] = useState('');
+  const [myNotifications] = useState<AssignmentNotification[]>(() =>
+    user ? getNotifications(user.email) : []
+  );
 
   const toggleStudent = (name: string) => {
     setOnboard(prev => prev.includes(name) ? prev.filter(s => s !== name) : [...prev, name]);
@@ -24,6 +32,11 @@ export default function DriverDashboard() {
 
   const submitEmergency = () => {
     if (!emergency.trim()) { toast.error('Please describe the emergency'); return; }
+    addReport({
+      driverName: user?.name || 'Unknown',
+      busNumber: 'Bus 01',
+      message: emergency.trim(),
+    });
     toast.success('Emergency report submitted to management');
     setEmergency('');
   };
@@ -34,6 +47,30 @@ export default function DriverDashboard() {
         <h2 className="text-2xl font-heading font-bold text-foreground">Driver Dashboard</h2>
         <p className="text-muted-foreground">Bus 01 • ABC-1234</p>
       </div>
+
+      {/* Assignment notifications */}
+      {myNotifications.length > 0 && (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-card rounded-xl p-6 shadow-card">
+          <div className="flex items-center gap-2 mb-4">
+            <Bell className="h-5 w-5 text-warning" />
+            <h3 className="font-heading font-semibold text-foreground">Assignment Notifications</h3>
+            <span className="ml-auto text-xs bg-warning/10 text-warning px-2 py-0.5 rounded-full">{myNotifications.length} new</span>
+          </div>
+          <div className="space-y-2">
+            {myNotifications.map(n => (
+              <div key={n.id} className="flex gap-3 p-3 rounded-lg bg-muted/50">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-success/10 text-success">
+                  <CheckCircle className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-sm text-foreground">{n.message}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{new Date(n.timestamp).toLocaleString()}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      )}
 
       <div className="grid md:grid-cols-2 gap-6">
         {/* Record students */}
@@ -86,11 +123,12 @@ export default function DriverDashboard() {
               <AlertTriangle className="h-5 w-5 text-destructive" />
               <h3 className="font-heading font-semibold text-foreground">Emergency Report</h3>
             </div>
-            <Input
-              placeholder="Describe the incident..."
+            <Textarea
+              placeholder="Describe the incident in detail..."
               value={emergency}
               onChange={e => setEmergency(e.target.value)}
               className="mb-3"
+              rows={3}
             />
             <Button variant="destructive" onClick={submitEmergency} className="w-full">
               <Send className="h-4 w-4 mr-2" /> Submit Report
