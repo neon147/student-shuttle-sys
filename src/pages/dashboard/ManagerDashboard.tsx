@@ -333,9 +333,12 @@ export default function ManagerDashboard() {
               <p className="text-sm font-medium text-foreground mb-2">Students ({bus.students.length})</p>
               <div className="flex flex-wrap gap-2 mb-3">
                 {bus.students.map((s, i) => (
-                  <span key={i} className="flex items-center gap-1.5 bg-muted text-muted-foreground text-xs px-3 py-1 rounded-full">
+                  <span key={i} className="flex items-center gap-1.5 bg-muted text-muted-foreground text-xs px-3 py-1 rounded-full group">
                     {s.photo && <img src={s.photo} alt={s.name} className="w-5 h-5 rounded-full object-cover" />}
                     {s.name}
+                    <button onClick={() => removeStudent(bus.id, i)} className="ml-1 text-muted-foreground/50 hover:text-destructive transition-colors" title="Remove student">
+                      <X className="h-3 w-3" />
+                    </button>
                   </span>
                 ))}
                 {bus.students.length === 0 && <span className="text-xs text-muted-foreground">No students assigned</span>}
