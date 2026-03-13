@@ -28,7 +28,7 @@ const initialBuses: BusData[] = [
 export default function ManagerDashboard() {
   const [buses, setBuses] = useState(initialBuses);
   const [showAdd, setShowAdd] = useState(false);
-  const [newBus, setNewBus] = useState({ number: '', plate: '', photo: '' });
+  const [newBus, setNewBus] = useState({ number: '', plate: '', route: '', photo: '' });
   const [newStudent, setNewStudent] = useState<Record<string, { name: string; email: string; photo: string }>>({});
   const [newDriver, setNewDriver] = useState<Record<string, { name: string; email: string; photo: string }>>({});
   const [reports, setReports] = useState<EmergencyReport[]>(() => getReports());
