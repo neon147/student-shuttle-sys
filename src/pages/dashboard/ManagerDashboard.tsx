@@ -251,6 +251,9 @@ export default function ManagerDashboard() {
             </div>
           </div>
           <div>
+            <Label className="flex items-center gap-2 mb-1"><MapPin className="h-4 w-4 text-muted-foreground" /> Route</Label>
+            <Input value={newBus.route} onChange={e => setNewBus(p => ({ ...p, route: e.target.value }))} placeholder="e.g. Central University → Downtown Hub" />
+          <div>
             <Label className="flex items-center gap-2 mb-1"><Camera className="h-4 w-4 text-muted-foreground" /> Bus Photo</Label>
             <div className="flex items-center gap-3">
               <input type="file" accept="image/*" ref={busPhotoRef} className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handlePhotoUpload(f, url => setNewBus(p => ({ ...p, photo: url }))); }} />
