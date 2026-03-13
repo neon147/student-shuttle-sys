@@ -11,6 +11,7 @@ interface BusData {
   id: string;
   number: string;
   plate: string;
+  route: string;
   driver: string;
   driverEmail: string;
   driverPhoto: string;
@@ -19,9 +20,9 @@ interface BusData {
 }
 
 const initialBuses: BusData[] = [
-  { id: '1', number: 'Bus 01', plate: 'ABC-1234', driver: 'Ahmed K.', driverEmail: '', driverPhoto: '', busPhoto: '', students: [{ name: 'Sara M.', email: '', photo: '' }, { name: 'Omar T.', email: '', photo: '' }, { name: 'Lina H.', email: '', photo: '' }] },
-  { id: '2', number: 'Bus 02', plate: 'XYZ-5678', driver: 'Fatima R.', driverEmail: '', driverPhoto: '', busPhoto: '', students: [{ name: 'Khalid A.', email: '', photo: '' }, { name: 'Noor S.', email: '', photo: '' }] },
-  { id: '3', number: 'Bus 03', plate: 'DEF-9012', driver: '', driverEmail: '', driverPhoto: '', busPhoto: '', students: [] },
+  { id: '1', number: 'Bus 01', plate: 'ABC-1234', route: 'Central University → Downtown Hub', driver: 'Ahmed K.', driverEmail: '', driverPhoto: '', busPhoto: '', students: [{ name: 'Sara M.', email: '', photo: '' }, { name: 'Omar T.', email: '', photo: '' }, { name: 'Lina H.', email: '', photo: '' }] },
+  { id: '2', number: 'Bus 02', plate: 'XYZ-5678', route: 'Riverside Academy → North Station', driver: 'Fatima R.', driverEmail: '', driverPhoto: '', busPhoto: '', students: [{ name: 'Khalid A.', email: '', photo: '' }, { name: 'Noor S.', email: '', photo: '' }] },
+  { id: '3', number: 'Bus 03', plate: 'DEF-9012', route: '', driver: '', driverEmail: '', driverPhoto: '', busPhoto: '', students: [] },
 ];
 
 export default function ManagerDashboard() {
