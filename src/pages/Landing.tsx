@@ -31,14 +31,14 @@ export default function Landing() {
             transition={{ duration: 0.7 }}
           >
             <span className="inline-block px-4 py-1.5 rounded-full bg-secondary/20 text-secondary text-sm font-semibold mb-6">
-              Smart School Transportation
+              Smart Bus Transportation
             </span>
             <h1 className="text-4xl md:text-6xl font-heading font-bold text-primary-foreground leading-tight mb-6">
               Safe Rides,<br />
               <span className="text-gradient">Smart Routes</span>
             </h1>
             <p className="text-lg text-primary-foreground/80 mb-8 max-w-lg">
-              BusTrack makes managing school and college transportation effortless.
+              BusTrack makes managing bus transportation effortless.
               Assign buses, track routes, and keep everyone informed — all in one place.
             </p>
             <div className="flex flex-wrap gap-4">
@@ -59,7 +59,7 @@ export default function Landing() {
           >
             <img
               src={heroBus}
-              alt="School bus illustration"
+              alt="Bus illustration"
               className="w-full rounded-2xl shadow-elevated animate-float"
             />
           </motion.div>
@@ -161,7 +161,7 @@ export default function Landing() {
 
       {/* Footer */}
       <footer className="py-8 bg-primary text-primary-foreground/60 text-center text-sm">
-        <p>© 2026 BusTrack — Smart School Transportation Management</p>
+        <p>© 2026 BusTrack — Smart Bus Transportation Management</p>
       </footer>
     </div>
   );
