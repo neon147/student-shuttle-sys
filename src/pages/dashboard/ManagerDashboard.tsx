@@ -253,6 +253,7 @@ export default function ManagerDashboard() {
           <div>
             <Label className="flex items-center gap-2 mb-1"><MapPin className="h-4 w-4 text-muted-foreground" /> Route</Label>
             <Input value={newBus.route} onChange={e => setNewBus(p => ({ ...p, route: e.target.value }))} placeholder="e.g. Central University → Downtown Hub" />
+          </div>
           <div>
             <Label className="flex items-center gap-2 mb-1"><Camera className="h-4 w-4 text-muted-foreground" /> Bus Photo</Label>
             <div className="flex items-center gap-3">
