@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Bus, Users, UserCheck, Plus, Hash, CreditCard, AlertTriangle, Eye, Ticket, Check, X, Camera, Image } from 'lucide-react';
+import { Bus, Users, UserCheck, Plus, Hash, CreditCard, AlertTriangle, Eye, Ticket, Check, X, Camera, Image, MapPin, UserX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,6 +11,7 @@ interface BusData {
   id: string;
   number: string;
   plate: string;
+  route: string;
   driver: string;
   driverEmail: string;
   driverPhoto: string;
@@ -19,15 +20,15 @@ interface BusData {
 }
 
 const initialBuses: BusData[] = [
-  { id: '1', number: 'Bus 01', plate: 'ABC-1234', driver: 'Ahmed K.', driverEmail: '', driverPhoto: '', busPhoto: '', students: [{ name: 'Sara M.', email: '', photo: '' }, { name: 'Omar T.', email: '', photo: '' }, { name: 'Lina H.', email: '', photo: '' }] },
-  { id: '2', number: 'Bus 02', plate: 'XYZ-5678', driver: 'Fatima R.', driverEmail: '', driverPhoto: '', busPhoto: '', students: [{ name: 'Khalid A.', email: '', photo: '' }, { name: 'Noor S.', email: '', photo: '' }] },
-  { id: '3', number: 'Bus 03', plate: 'DEF-9012', driver: '', driverEmail: '', driverPhoto: '', busPhoto: '', students: [] },
+  { id: '1', number: 'Bus 01', plate: 'ABC-1234', route: 'Central University → Downtown Hub', driver: 'Ahmed K.', driverEmail: '', driverPhoto: '', busPhoto: '', students: [{ name: 'Sara M.', email: '', photo: '' }, { name: 'Omar T.', email: '', photo: '' }, { name: 'Lina H.', email: '', photo: '' }] },
+  { id: '2', number: 'Bus 02', plate: 'XYZ-5678', route: 'Riverside Academy → North Station', driver: 'Fatima R.', driverEmail: '', driverPhoto: '', busPhoto: '', students: [{ name: 'Khalid A.', email: '', photo: '' }, { name: 'Noor S.', email: '', photo: '' }] },
+  { id: '3', number: 'Bus 03', plate: 'DEF-9012', route: '', driver: '', driverEmail: '', driverPhoto: '', busPhoto: '', students: [] },
 ];
 
 export default function ManagerDashboard() {
   const [buses, setBuses] = useState(initialBuses);
   const [showAdd, setShowAdd] = useState(false);
-  const [newBus, setNewBus] = useState({ number: '', plate: '', photo: '' });
+  const [newBus, setNewBus] = useState({ number: '', plate: '', route: '', photo: '' });
   const [newStudent, setNewStudent] = useState<Record<string, { name: string; email: string; photo: string }>>({});
   const [newDriver, setNewDriver] = useState<Record<string, { name: string; email: string; photo: string }>>({});
   const [reports, setReports] = useState<EmergencyReport[]>(() => getReports());
@@ -51,10 +52,20 @@ export default function ManagerDashboard() {
 
   const addBus = () => {
     if (!newBus.number || !newBus.plate) { toast.error('Fill in all fields'); return; }
-    setBuses(prev => [...prev, { id: crypto.randomUUID(), number: newBus.number, plate: newBus.plate, driver: '', driverEmail: '', driverPhoto: '', busPhoto: newBus.photo, students: [] }]);
-    setNewBus({ number: '', plate: '', photo: '' });
+    setBuses(prev => [...prev, { id: crypto.randomUUID(), number: newBus.number, plate: newBus.plate, route: newBus.route, driver: '', driverEmail: '', driverPhoto: '', busPhoto: newBus.photo, students: [] }]);
+    setNewBus({ number: '', plate: '', route: '', photo: '' });
     setShowAdd(false);
     toast.success('Bus added!');
+  };
+
+  const removeStudent = (busId: string, studentIndex: number) => {
+    setBuses(prev => prev.map(b => b.id === busId ? { ...b, students: b.students.filter((_, i) => i !== studentIndex) } : b));
+    toast.success('Student removed');
+  };
+
+  const removeDriver = (busId: string) => {
+    setBuses(prev => prev.map(b => b.id === busId ? { ...b, driver: '', driverEmail: '', driverPhoto: '' } : b));
+    toast.success('Driver removed');
   };
 
   const assignStudent = (busId: string) => {
@@ -240,6 +251,10 @@ export default function ManagerDashboard() {
             </div>
           </div>
           <div>
+            <Label className="flex items-center gap-2 mb-1"><MapPin className="h-4 w-4 text-muted-foreground" /> Route</Label>
+            <Input value={newBus.route} onChange={e => setNewBus(p => ({ ...p, route: e.target.value }))} placeholder="e.g. Central University → Downtown Hub" />
+          </div>
+          <div>
             <Label className="flex items-center gap-2 mb-1"><Camera className="h-4 w-4 text-muted-foreground" /> Bus Photo</Label>
             <div className="flex items-center gap-3">
               <input type="file" accept="image/*" ref={busPhotoRef} className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handlePhotoUpload(f, url => setNewBus(p => ({ ...p, photo: url }))); }} />
@@ -269,6 +284,7 @@ export default function ManagerDashboard() {
                 <div>
                   <h3 className="font-heading font-semibold text-foreground">{bus.number}</h3>
                   <p className="text-xs text-muted-foreground">{bus.plate}</p>
+                  {bus.route && <p className="text-xs text-accent flex items-center gap-1 mt-0.5"><MapPin className="h-3 w-3" />{bus.route}</p>}
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -276,6 +292,11 @@ export default function ManagerDashboard() {
                 <span className={`text-sm px-3 py-1 rounded-full font-medium ${bus.driver ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'}`}>
                   {bus.driver ? `Driver: ${bus.driver}` : 'No driver'}
                 </span>
+                {bus.driver && (
+                  <Button size="sm" variant="ghost" className="text-destructive hover:bg-destructive/10 h-7 w-7 p-0" onClick={() => removeDriver(bus.id)} title="Remove driver">
+                    <UserX className="h-3.5 w-3.5" />
+                  </Button>
+                )}
               </div>
             </div>
 
@@ -312,9 +333,12 @@ export default function ManagerDashboard() {
               <p className="text-sm font-medium text-foreground mb-2">Students ({bus.students.length})</p>
               <div className="flex flex-wrap gap-2 mb-3">
                 {bus.students.map((s, i) => (
-                  <span key={i} className="flex items-center gap-1.5 bg-muted text-muted-foreground text-xs px-3 py-1 rounded-full">
+                  <span key={i} className="flex items-center gap-1.5 bg-muted text-muted-foreground text-xs px-3 py-1 rounded-full group">
                     {s.photo && <img src={s.photo} alt={s.name} className="w-5 h-5 rounded-full object-cover" />}
                     {s.name}
+                    <button onClick={() => removeStudent(bus.id, i)} className="ml-1 text-muted-foreground/50 hover:text-destructive transition-colors" title="Remove student">
+                      <X className="h-3 w-3" />
+                    </button>
                   </span>
                 ))}
                 {bus.students.length === 0 && <span className="text-xs text-muted-foreground">No students assigned</span>}
