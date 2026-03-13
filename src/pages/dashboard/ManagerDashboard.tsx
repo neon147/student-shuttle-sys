@@ -284,6 +284,7 @@ export default function ManagerDashboard() {
                 <div>
                   <h3 className="font-heading font-semibold text-foreground">{bus.number}</h3>
                   <p className="text-xs text-muted-foreground">{bus.plate}</p>
+                  {bus.route && <p className="text-xs text-accent flex items-center gap-1 mt-0.5"><MapPin className="h-3 w-3" />{bus.route}</p>}
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -291,6 +292,11 @@ export default function ManagerDashboard() {
                 <span className={`text-sm px-3 py-1 rounded-full font-medium ${bus.driver ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'}`}>
                   {bus.driver ? `Driver: ${bus.driver}` : 'No driver'}
                 </span>
+                {bus.driver && (
+                  <Button size="sm" variant="ghost" className="text-destructive hover:bg-destructive/10 h-7 w-7 p-0" onClick={() => removeDriver(bus.id)} title="Remove driver">
+                    <UserX className="h-3.5 w-3.5" />
+                  </Button>
+                )}
               </div>
             </div>
 
