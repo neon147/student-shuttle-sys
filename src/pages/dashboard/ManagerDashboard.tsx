@@ -52,10 +52,20 @@ export default function ManagerDashboard() {
 
   const addBus = () => {
     if (!newBus.number || !newBus.plate) { toast.error('Fill in all fields'); return; }
-    setBuses(prev => [...prev, { id: crypto.randomUUID(), number: newBus.number, plate: newBus.plate, driver: '', driverEmail: '', driverPhoto: '', busPhoto: newBus.photo, students: [] }]);
-    setNewBus({ number: '', plate: '', photo: '' });
+    setBuses(prev => [...prev, { id: crypto.randomUUID(), number: newBus.number, plate: newBus.plate, route: newBus.route, driver: '', driverEmail: '', driverPhoto: '', busPhoto: newBus.photo, students: [] }]);
+    setNewBus({ number: '', plate: '', route: '', photo: '' });
     setShowAdd(false);
     toast.success('Bus added!');
+  };
+
+  const removeStudent = (busId: string, studentIndex: number) => {
+    setBuses(prev => prev.map(b => b.id === busId ? { ...b, students: b.students.filter((_, i) => i !== studentIndex) } : b));
+    toast.success('Student removed');
+  };
+
+  const removeDriver = (busId: string) => {
+    setBuses(prev => prev.map(b => b.id === busId ? { ...b, driver: '', driverEmail: '', driverPhoto: '' } : b));
+    toast.success('Driver removed');
   };
 
   const assignStudent = (busId: string) => {
